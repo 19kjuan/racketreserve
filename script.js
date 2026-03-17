@@ -245,6 +245,7 @@ class TennisReservationSystem {
 
     createSlotElement(slotKey, slot) {
         const div = document.createElement('div');
+        div.setAttribute('data-slot-key', slotKey);
         
         if (slot.status === 'booked') {
             div.className = 'slot booked';
@@ -333,6 +334,7 @@ class TennisReservationSystem {
 
     selectSlot(slotKey, slot) {
         this.selectedSlot = { key: slotKey, ...slot };
+        this.selectedSlotKey = slotKey; // Save for direct DOM manipulation
         
         document.getElementById('slotDate').value = this.selectedDate;
         document.getElementById('slotTime').value = slot.time;
@@ -386,14 +388,32 @@ class TennisReservationSystem {
                 document.getElementById('reservationForm').style.display = 'none';
                 this.selectedSlot = null;
                 
-                // Force immediate data reload from Supabase
-                console.log('🔄 Force reloading data from Supabase...');
-                await this.loadData();
+                // 🔥 DIRECT DOM MANIPULATION - Force immediate UI update
+                console.log('🔥 Forcing immediate UI update for slot:', this.selectedSlotKey);
+                const slotElement = document.querySelector(`[data-slot-key="${this.selectedSlotKey}"]`);
+                if (slotElement) {
+                    slotElement.className = 'slot booked';
+                    slotElement.innerHTML = `
+                        <div>
+                            <div class="slot-time">${this.selectedSlot.time}</div>
+                            <div class="slot-court">${this.selectedSlot.court}</div>
+                        </div>
+                        <div class="slot-status status-booked">Reservado</div>
+                        <div class="slot-customer">${name}</div>
+                    `;
+                    slotElement.onclick = null;
+                    console.log('✅ Slot updated directly in DOM');
+                }
                 
-                // Then reload schedule with fresh data
-                await this.loadSchedule(true);
+                // Then try to reload data (but UI is already updated)
+                try {
+                    await this.loadData();
+                    await this.loadSchedule(true);
+                } catch (error) {
+                    console.log('Data reload failed, but UI is already updated');
+                }
                 
-                console.log('✅ Schedule reloaded with fresh data');
+                console.log('✅ Reservation complete - UI updated');
             } else {
                 this.showNotification('Error al guardar reserva: ' + result.error, 'error');
             }
