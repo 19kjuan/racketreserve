@@ -114,11 +114,19 @@ class TennisReservationSystem {
     generateDaySchedule(date) {
         const schedule = {};
         
+        // Default settings if not available
+        const defaultSettings = {
+            morningSlots: ['06', '07', '08'],
+            afternoonSlots: ['17', '18', '19', '20']
+        };
+        
+        const settings = this.data?.settings || defaultSettings;
+        
         // Morning slots (Cancha 3)
-        this.data.settings.morningSlots.forEach(time => {
+        settings.morningSlots.forEach(time => {
             schedule[`morning_${time}`] = {
                 time: time,
-                court: this.data.settings.morningCourt,
+                court: 'Cancha 3',
                 status: 'available',
                 customer: null,
                 phone: null,
@@ -128,10 +136,10 @@ class TennisReservationSystem {
         });
         
         // Afternoon slots (Cancha 6)
-        this.data.settings.afternoonSlots.forEach(time => {
+        settings.afternoonSlots.forEach(time => {
             schedule[`afternoon_${time}`] = {
                 time: time,
-                court: this.data.settings.afternoonCourt,
+                court: 'Cancha 6',
                 status: 'available',
                 customer: null,
                 phone: null,
@@ -166,8 +174,16 @@ class TennisReservationSystem {
         morningContainer.innerHTML = '';
         afternoonContainer.innerHTML = '';
         
+        // Default settings if not available
+        const defaultSettings = {
+            morningSlots: ['06', '07', '08'],
+            afternoonSlots: ['17', '18', '19', '20']
+        };
+        
+        const settings = this.data?.settings || defaultSettings;
+        
         // Morning slots
-        this.data.settings.morningSlots.forEach(time => {
+        settings.morningSlots.forEach(time => {
             const slotKey = `morning_${time}`;
             const slot = schedule[slotKey];
             if (slot && slot.status === 'available') {
@@ -176,7 +192,7 @@ class TennisReservationSystem {
         });
         
         // Afternoon slots
-        this.data.settings.afternoonSlots.forEach(time => {
+        settings.afternoonSlots.forEach(time => {
             const slotKey = `afternoon_${time}`;
             const slot = schedule[slotKey];
             if (slot && slot.status === 'available') {
