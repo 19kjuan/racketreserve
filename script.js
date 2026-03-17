@@ -8,6 +8,11 @@ class TennisReservationSystem {
     }
 
     async init() {
+        // Wait for SupabaseDB to be available
+        while (typeof SupabaseDB === 'undefined') {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
         // Initialize Supabase database
         this.db = new SupabaseDB();
         

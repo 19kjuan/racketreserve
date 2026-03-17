@@ -4,7 +4,7 @@ const SUPABASE_URL = 'https://smpwhygbfrbcefmqgbky.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtcHdoeWdiZnJiY2VmbXFnYmt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NjYzNjUsImV4cCI6MjA4OTM0MjM2NX0.jnWhSebpmsqyT4OHQ6O2a2gttQL92w1ZEn-yErOzcCs';
 
 // Initialize Supabase client
-let supabase;
+var supabase;
 
 // Initialize Supabase when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeSupabase() {
+    // Prevent multiple initialization
+    if (supabase) {
+        console.log('Supabase already initialized');
+        return true;
+    }
+    
     // Check if credentials are set
     if (SUPABASE_URL === 'https://YOUR_PROJECT_REF.supabase.co') {
         console.warn('⚠️ Supabase credentials not configured. Using localStorage fallback.');
