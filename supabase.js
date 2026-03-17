@@ -294,11 +294,17 @@ class SupabaseDB {
         
         // Ensure data is an array
         const reservations = Array.isArray(data) ? data : [];
+        console.log('🔍 formatDataForDate - Processing reservations:', reservations);
         
         // Override with actual reservations
         reservations.forEach(reservation => {
             const slotKey = `${reservation.time_period}_${reservation.slot_time.replace(':', '')}`;
+            console.log('🔍 Processing reservation:', reservation);
+            console.log('🔍 Generated slotKey:', slotKey);
+            console.log('🔍 Slot exists in default:', !!defaultSchedule[slotKey]);
+            
             if (defaultSchedule[slotKey]) {
+                console.log('🔍 Before update:', defaultSchedule[slotKey]);
                 defaultSchedule[slotKey] = {
                     ...defaultSchedule[slotKey],
                     status: reservation.status,
@@ -308,8 +314,11 @@ class SupabaseDB {
                     bookingDate: reservation.booking_date,
                     id: reservation.id
                 };
+                console.log('🔍 After update:', defaultSchedule[slotKey]);
             }
         });
+        
+        console.log('🔍 Final schedule:', defaultSchedule);
         
         return defaultSchedule;
     }
