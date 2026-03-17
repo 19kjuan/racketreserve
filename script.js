@@ -244,13 +244,14 @@ class TennisReservationSystem {
         
         if (slot.status === 'booked') {
             div.className = 'slot booked';
+            const customerName = slot.customer || 'Reservado';
             div.innerHTML = `
                 <div>
                     <div class="slot-time">${slot.time}</div>
                     <div class="slot-court">${slot.court}</div>
                 </div>
                 <div class="slot-status status-booked">Reservado</div>
-                <div class="slot-customer">${slot.customer}</div>
+                <div class="slot-customer">${customerName}</div>
             `;
             div.onclick = null; // No clickable when booked
         } else {
@@ -381,8 +382,14 @@ class TennisReservationSystem {
                 document.getElementById('reservationForm').style.display = 'none';
                 this.selectedSlot = null;
                 
-                // Reload schedule with force refresh
+                // Force immediate data reload from Supabase
+                console.log('🔄 Force reloading data from Supabase...');
+                await this.loadData();
+                
+                // Then reload schedule with fresh data
                 await this.loadSchedule(true);
+                
+                console.log('✅ Schedule reloaded with fresh data');
             } else {
                 this.showNotification('Error al guardar reserva: ' + result.error, 'error');
             }
