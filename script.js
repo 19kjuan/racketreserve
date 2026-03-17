@@ -337,8 +337,8 @@ class TennisReservationSystem {
         // Create reservation object
         const reservation = {
             date: this.selectedDate,
-            time: this.selectedSlot.time,
-            period: this.selectedSlot.key.split('_')[0],
+            slot_time: this.selectedSlot.time,
+            time_period: this.selectedSlot.key.split('_')[0],
             slot_key: this.selectedSlot.key,
             court: this.selectedSlot.court,
             status: 'booked',
