@@ -249,12 +249,15 @@ class SupabaseDB {
     formatData(data) {
         const formatted = { reservations: {}, settings: {} };
         
-        data.forEach(reservation => {
+        // Ensure data is an array
+        const reservations = Array.isArray(data) ? data : [];
+        
+        reservations.forEach(reservation => {
             if (!formatted.reservations[reservation.date]) {
                 formatted.reservations[reservation.date] = {};
             }
             formatted.reservations[reservation.date][reservation.slot_key] = {
-                time: reservation.time,
+                time: reservation.slot_time || reservation.time,
                 court: reservation.court,
                 status: reservation.status,
                 customer: reservation.customer,
@@ -282,9 +285,12 @@ class SupabaseDB {
             afternoon_20: { time: '20:00', court: 'Cancha 6', status: 'available', customer: null, phone: null, email: null, bookingDate: null }
         };
         
+        // Ensure data is an array
+        const reservations = Array.isArray(data) ? data : [];
+        
         // Override with actual reservations
-        data.forEach(reservation => {
-            const slotKey = `${reservation.period}_${reservation.time.replace(':', '')}`;
+        reservations.forEach(reservation => {
+            const slotKey = `${reservation.time_period}_${reservation.slot_time.replace(':', '')}`;
             if (defaultSchedule[slotKey]) {
                 defaultSchedule[slotKey] = {
                     ...defaultSchedule[slotKey],
