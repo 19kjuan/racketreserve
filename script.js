@@ -71,29 +71,26 @@ class TennisReservationSystem {
 
     async loadData() {
         try {
-            const result = await this.db.getAllReservations();
-            if (result.reservations) {
-                this.data = result;
-            } else {
-                // Fallback to default structure
-                this.data = {
-                    reservations: {},
-                    settings: {
-                        morningSlots: ['06:00', '07:00', '08:00'],
-                        afternoonSlots: ['17:00', '18:00', '19:00', '20:00'],
-                        morningCourt: 'Cancha 3',
-                        afternoonCourt: 'Cancha 6'
-                    }
-                };
-            }
+            const reservations = await this.db.getAllReservations();
+
+            this.data = {
+                reservations: reservations || [],
+                settings: {
+                    morningSlots: ['06', '07', '08'],
+                    afternoonSlots: ['17', '18', '19', '20'],
+                    morningCourt: 'Cancha 3',
+                    afternoonCourt: 'Cancha 6'
+                }
+            };
+
         } catch (error) {
             console.error('Error loading data:', error);
-            // Use fallback structure
+
             this.data = {
-                reservations: {},
+                reservations: [],
                 settings: {
-                    morningSlots: ['06:00', '07:00', '08:00'],
-                    afternoonSlots: ['17:00', '18:00', '19:00', '20:00'],
+                    morningSlots: ['06', '07', '08'],
+                    afternoonSlots: ['17', '18', '19', '20'],
                     morningCourt: 'Cancha 3',
                     afternoonCourt: 'Cancha 6'
                 }
@@ -180,10 +177,17 @@ class TennisReservationSystem {
             afternoonSlots: ['17', '18', '19', '20']
         };
         
-        const settings = this.data?.settings || defaultSettings;
+        const settings = this.data?.settings ?? defaultSettings;
+        const morningSlots = settings.morningSlots ?? defaultSettings.morningSlots;
+        const afternoonSlots = settings.afternoonSlots ?? defaultSettings.afternoonSlots;
+        
+        // Debug logs
+        console.log("settings:", settings);
+        console.log("morningSlots:", morningSlots);
+        console.log("afternoonSlots:", afternoonSlots);
         
         // Morning slots
-        settings.morningSlots.forEach(time => {
+        morningSlots.forEach(time => {
             const slotKey = `morning_${time}`;
             const slot = schedule[slotKey];
             if (slot && slot.status === 'available') {
@@ -192,7 +196,7 @@ class TennisReservationSystem {
         });
         
         // Afternoon slots
-        settings.afternoonSlots.forEach(time => {
+        afternoonSlots.forEach(time => {
             const slotKey = `afternoon_${time}`;
             const slot = schedule[slotKey];
             if (slot && slot.status === 'available') {
