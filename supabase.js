@@ -1,42 +1,41 @@
 // Supabase Configuration
-// Reemplaza ESTAS líneas con tus credenciales reales:
 const SUPABASE_URL = 'https://smpwhygbfrbcefmqgbky.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtcHdoeWdiZnJiY2VmbXFnYmt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NjYzNjUsImV4cCI6MjA4OTM0MjM2NX0.jnWhSebpmsqyT4OHQ6O2a2gttQL92w1ZEn-yErOzcCs';
 
-// Initialize Supabase client
-var supabase;
+// Global Supabase client
+let supabase = null;
 
-// Initialize Supabase manually when needed
+// Initialize Supabase client
 function initializeSupabase() {
-    // Prevent multiple initialization
     if (supabase) {
-        console.log('Supabase already initialized');
+        console.log('✅ Supabase already initialized');
         return true;
     }
     
-    // Check if credentials are set
-    if (SUPABASE_URL === 'https://YOUR_PROJECT_REF.supabase.co') {
-        console.warn('⚠️ Supabase credentials not configured. Using localStorage fallback.');
-        return false;
-    }
-
     try {
-        // Check if Supabase SDK is loaded
+        // Check if Supabase SDK is available
         if (typeof window.supabase === 'undefined') {
             console.error('❌ Supabase SDK not loaded');
             return false;
         }
         
-        // Create client with correct v2 syntax
-        const { createClient } = window.supabase;
-        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Create client
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        console.log('✅ Supabase initialized successfully');
-        console.log('Supabase client type:', typeof supabase);
+        // Test the client
+        if (typeof supabase.from !== 'function') {
+            console.error('❌ Supabase client created but from method not available');
+            console.log('Supabase object:', supabase);
+            return false;
+        }
+        
+        console.log('✅ Supabase client created successfully');
+        console.log('Client type:', typeof supabase);
         console.log('Has from method:', typeof supabase.from);
         return true;
+        
     } catch (error) {
-        console.error('❌ Error initializing Supabase:', error);
+        console.error('❌ Error creating Supabase client:', error);
         return false;
     }
 }
@@ -64,18 +63,24 @@ class SupabaseDB {
     }
 
     async getAllReservations() {
-        if (!this.isSupabaseAvailable) {
+        if (!this.isSupabaseAvailable || !supabase) {
+            console.log('Using localStorage fallback for getAllReservations');
             return this.getFromLocalStorage();
         }
 
         try {
+            console.log('Fetching from Supabase...');
             const { data, error } = await supabase
                 .from(this.tableName)
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
             
+            console.log('Supabase data received:', data);
             return this.formatData(data);
         } catch (error) {
             console.error('Error fetching reservations:', error);
@@ -84,19 +89,25 @@ class SupabaseDB {
     }
 
     async getReservationsByDate(date) {
-        if (!this.isSupabaseAvailable) {
+        if (!this.isSupabaseAvailable || !supabase) {
+            console.log('Using localStorage fallback for getReservationsByDate');
             return this.getFromLocalStorage(date);
         }
 
         try {
+            console.log('Fetching from Supabase for date:', date);
             const { data, error } = await supabase
                 .from(this.tableName)
                 .select('*')
                 .eq('date', date)
-                .order('time', { ascending: true });
+                .order('slot_time', { ascending: true });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
             
+            console.log('Supabase data for date received:', data);
             return this.formatDataForDate(data, date);
         } catch (error) {
             console.error('Error fetching reservations by date:', error);
