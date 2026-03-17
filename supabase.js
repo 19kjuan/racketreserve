@@ -2,14 +2,14 @@
 const SUPABASE_URL = 'https://smpwhygbfrbcefmqgbky.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtcHdoeWdiZnJiY2VmbXFnYmt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NjYzNjUsImV4cCI6MjA4OTM0MjM2NX0.jnWhSebpmsqyT4OHQ6O2a2gttQL92w1ZEn-yErOzcCs';
 
-// Use window.supabase to avoid redeclaration
-if (!window.supabaseClient) {
-    window.supabaseClient = null;
+// Use window.mySupabaseClient to avoid conflict with SDK global variable
+if (!window.mySupabaseClient) {
+    window.mySupabaseClient = null;
 }
 
 // Initialize Supabase client
 function initializeSupabase() {
-    if (window.supabaseClient) {
+    if (window.mySupabaseClient) {
         console.log('✅ Supabase already initialized');
         return true;
     }
@@ -23,18 +23,18 @@ function initializeSupabase() {
         
         // Create client using correct v2 syntax
         const { createClient } = window.supabase;
-        window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.mySupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // Verification - this is key test
         console.log('🔍 Supabase client verification:');
-        console.log('supabase object:', window.supabaseClient);
-        console.log('typeof supabase:', typeof window.supabaseClient);
-        console.log('has from method:', typeof window.supabaseClient.from);
-        console.log('has auth method:', typeof window.supabaseClient.auth);
-        console.log('has rpc method:', typeof window.supabaseClient.rpc);
+        console.log('supabase object:', window.mySupabaseClient);
+        console.log('typeof supabase:', typeof window.mySupabaseClient);
+        console.log('has from method:', typeof window.mySupabaseClient.from);
+        console.log('has auth method:', typeof window.mySupabaseClient.auth);
+        console.log('has rpc method:', typeof window.mySupabaseClient.rpc);
         
-        // Test the client
-        if (typeof window.supabaseClient.from !== 'function') {
+        // Test client
+        if (typeof window.mySupabaseClient.from !== 'function') {
             console.error('❌ CRITICAL: supabase.from is NOT a function!');
             console.error('❌ Client creation failed - using wrong syntax');
             return false;
@@ -72,14 +72,14 @@ class SupabaseDB {
     }
 
     async getAllReservations() {
-        if (!this.isSupabaseAvailable || !window.supabaseClient) {
+        if (!this.isSupabaseAvailable || !window.mySupabaseClient) {
             console.log('Using localStorage fallback for getAllReservations');
             return this.getFromLocalStorage();
         }
 
         try {
             console.log('Fetching from Supabase...');
-            const { data, error } = await window.supabaseClient
+            const { data, error } = await window.mySupabaseClient
                 .from(this.tableName)
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -98,14 +98,14 @@ class SupabaseDB {
     }
 
     async getReservationsByDate(date) {
-        if (!this.isSupabaseAvailable || !window.supabaseClient) {
+        if (!this.isSupabaseAvailable || !window.mySupabaseClient) {
             console.log('Using localStorage fallback for getReservationsByDate');
             return this.getFromLocalStorage(date);
         }
 
         try {
             console.log('Fetching from Supabase for date:', date);
-            const { data, error } = await window.supabaseClient
+            const { data, error } = await window.mySupabaseClient
                 .from(this.tableName)
                 .select('*')
                 .eq('date', date)
