@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👨‍🏫 Panel del Entrenador - Sistema Profesional</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👨‍🏆 Panel del Entrenador</h1>
+            
+            <!-- User Info Section -->
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar">JD</div>
+                <div class="user-details">
+                    <div class="user-name" id="userName">Cargando...</div>
+                    <div class="user-email" id="userEmail">Cargando...</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+            
+            <nav>
+                <a href="index.html">📅 Reservar Clase</a>
+                <a href="admin.html" class="active">👨‍🏫 Panel Entrenador</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="admin-controls">
+                <h2>🎛️ Control de Reservas</h2>
+                
+                <div class="date-selector">
+                    <label for="adminDate">📅 Seleccionar Fecha:</label>
+                    <input type="date" id="adminDate" />
+                    <button onclick="loadAdminSchedule()" class="btn-primary">🔄 Cargar Horarios</button>
+                </div>
+
+                <div class="quick-actions">
+                    <button onclick="resetDailySchedule()" class="btn-warning">🔄 Reiniciar Día</button>
+                    <button onclick="exportData()" class="btn-info">💾 Exportar Datos</button>
+                </div>
+            </section>
+
+            <section class="admin-stats">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>📊 Total Reservas</h3>
+                        <span id="totalReservations">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>✅ Disponibles</h3>
+                        <span id="availableSlots">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>📝 Reservadas</h3>
+                        <span id="bookedSlots">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>❌ Canceladas</h3>
+                        <span id="cancelledSlots">0</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="schedule-management">
+                <h2>📋 Gestión de Horarios</h2>
+                
+                <div class="time-slots-admin">
+                    <div class="morning-slots-admin">
+                        <h3>🌅 Mañana (Cancha 3)</h3>
+                        <div id="morningSlotsAdmin"></div>
+                    </div>
+                    
+                    <div class="afternoon-slots-admin">
+                        <h3>🌆 Tarde (Cancha 6)</h3>
+                        <div id="afternoonSlotsAdmin"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="reservations-list">
+                <h2>📋 Lista de Reservas del Día</h2>
+                <div id="reservationsList"></div>
+            </section>
+        </main>
+
+        <div id="adminNotification" class="notification"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="supabase.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

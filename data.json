@@ -1,0 +1,10 @@
+{
+  "reservations": {},
+  "settings": {
+    "morningSlots": ["06:00", "07:00", "08:00"],
+    "afternoonSlots": ["17:00", "18:00", "19:00", "20:00"],
+    "morningCourt": "Cancha 3",
+    "afternoonCourt": "Cancha 6",
+    "autoResetDaily": true
+  }
+}
