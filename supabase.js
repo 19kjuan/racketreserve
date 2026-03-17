@@ -19,19 +19,26 @@ function initializeSupabase() {
             return false;
         }
         
-        // Create client
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Create client using correct v2 syntax
+        const { createClient } = window.supabase;
+        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Verification - this is the key test
+        console.log('🔍 Supabase client verification:');
+        console.log('supabase object:', supabase);
+        console.log('typeof supabase:', typeof supabase);
+        console.log('has from method:', typeof supabase.from);
+        console.log('has auth method:', typeof supabase.auth);
+        console.log('has rpc method:', typeof supabase.rpc);
         
         // Test the client
         if (typeof supabase.from !== 'function') {
-            console.error('❌ Supabase client created but from method not available');
-            console.log('Supabase object:', supabase);
+            console.error('❌ CRITICAL: supabase.from is NOT a function!');
+            console.error('❌ Client creation failed - using wrong syntax');
             return false;
         }
         
-        console.log('✅ Supabase client created successfully');
-        console.log('Client type:', typeof supabase);
-        console.log('Has from method:', typeof supabase.from);
+        console.log('✅ Supabase client created successfully with all methods');
         return true;
         
     } catch (error) {
