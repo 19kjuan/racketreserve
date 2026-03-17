@@ -127,7 +127,14 @@ class SupabaseDB {
             }
             
             console.log('Supabase data for date received:', data);
-            return this.formatDataForDate(data, date);
+            console.log('Data type:', typeof data);
+            console.log('Data length:', data?.length);
+            console.log('First reservation:', data?.[0]);
+            
+            const formatted = this.formatDataForDate(data, date);
+            console.log('Formatted schedule:', formatted);
+            
+            return formatted;
         } catch (error) {
             console.error('Error fetching reservations by date:', error);
             return this.getFromLocalStorage(date);
