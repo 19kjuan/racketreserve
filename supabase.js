@@ -6,11 +6,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // Initialize Supabase client
 var supabase;
 
-// Initialize Supabase when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    initializeSupabase();
-});
-
+// Initialize Supabase manually when needed
 function initializeSupabase() {
     // Prevent multiple initialization
     if (supabase) {
@@ -25,8 +21,15 @@ function initializeSupabase() {
     }
 
     try {
+        // Check if Supabase SDK is loaded
+        if (typeof window.supabase === 'undefined') {
+            console.error('❌ Supabase SDK not loaded');
+            return false;
+        }
+        
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('✅ Supabase initialized successfully');
+        console.log('Supabase client methods:', Object.getOwnPropertyNames(supabase));
         return true;
     } catch (error) {
         console.error('❌ Error initializing Supabase:', error);
@@ -47,14 +50,9 @@ class SupabaseDB {
         }
 
         try {
-            // Create the table if it doesn't exist
-            const { data, error } = await supabase.rpc('create_reservations_table');
-            
-            if (error && !error.message.includes('already exists')) {
-                console.error('Error creating table:', error);
-            }
-            
-            return { success: true, data };
+            // Table should already exist from SQL setup
+            console.log('Database table should already exist from SQL setup');
+            return { success: true, data: null };
         } catch (error) {
             console.error('Database initialization error:', error);
             return { success: false, error };
