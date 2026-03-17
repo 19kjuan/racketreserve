@@ -72,6 +72,12 @@ class SupabaseDB {
     }
 
     async getAllReservations() {
+        console.log('🔍 getAllReservations - Debug:');
+        console.log('this.isSupabaseAvailable:', this.isSupabaseAvailable);
+        console.log('window.mySupabaseClient exists:', !!window.mySupabaseClient);
+        console.log('window.mySupabaseClient type:', typeof window.mySupabaseClient);
+        console.log('window.mySupabaseClient.from type:', typeof window.mySupabaseClient?.from);
+        
         if (!this.isSupabaseAvailable || !window.mySupabaseClient) {
             console.log('Using localStorage fallback for getAllReservations');
             return this.getFromLocalStorage();
@@ -79,7 +85,11 @@ class SupabaseDB {
 
         try {
             console.log('Fetching from Supabase...');
-            const { data, error } = await window.mySupabaseClient
+            const client = window.mySupabaseClient;
+            console.log('Client being used:', client);
+            console.log('Client.from type:', typeof client.from);
+            
+            const { data, error } = await client
                 .from(this.tableName)
                 .select('*')
                 .order('created_at', { ascending: false });
