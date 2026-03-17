@@ -146,7 +146,7 @@ class SupabaseDB {
                 updated_at: new Date().toISOString()
             };
 
-            const { data, error } = await supabase
+            const { data, error } = await window.mySupabaseClient
                 .from(this.tableName)
                 .insert([reservationWithTimestamp])
                 .select()
@@ -170,7 +170,7 @@ class SupabaseDB {
         }
 
         try {
-            const { data, error } = await supabase
+            const { data, error } = await window.mySupabaseClient
                 .from(this.tableName)
                 .update({
                     ...updates,
@@ -195,7 +195,7 @@ class SupabaseDB {
         }
 
         try {
-            const { error } = await supabase
+            const { error } = await window.mySupabaseClient
                 .from(this.tableName)
                 .delete()
                 .eq('id', id);
