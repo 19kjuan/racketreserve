@@ -196,7 +196,7 @@ class TennisReservationSystem {
         morningSlots.forEach(time => {
             const slotKey = `morning_${time}`;
             const slot = schedule[slotKey];
-            if (slot && slot.status === 'available') {
+            if (slot) {
                 morningContainer.appendChild(this.createSlotElement(slotKey, slot));
             }
         });
@@ -205,7 +205,7 @@ class TennisReservationSystem {
         afternoonSlots.forEach(time => {
             const slotKey = `afternoon_${time}`;
             const slot = schedule[slotKey];
-            if (slot && slot.status === 'available') {
+            if (slot) {
                 afternoonContainer.appendChild(this.createSlotElement(slotKey, slot));
             }
         });
@@ -241,15 +241,30 @@ class TennisReservationSystem {
 
     createSlotElement(slotKey, slot) {
         const div = document.createElement('div');
-        div.className = 'slot available';
-        div.innerHTML = `
-            <div>
-                <div class="slot-time">${slot.time}</div>
-                <div class="slot-court">${slot.court}</div>
-            </div>
-            <div class="slot-status status-available">Disponible</div>
-        `;
-        div.onclick = () => this.selectSlot(slotKey, slot);
+        
+        if (slot.status === 'booked') {
+            div.className = 'slot booked';
+            div.innerHTML = `
+                <div>
+                    <div class="slot-time">${slot.time}</div>
+                    <div class="slot-court">${slot.court}</div>
+                </div>
+                <div class="slot-status status-booked">Reservado</div>
+                <div class="slot-customer">${slot.customer}</div>
+            `;
+            div.onclick = null; // No clickable when booked
+        } else {
+            div.className = 'slot available';
+            div.innerHTML = `
+                <div>
+                    <div class="slot-time">${slot.time}</div>
+                    <div class="slot-court">${slot.court}</div>
+                </div>
+                <div class="slot-status status-available">Disponible</div>
+            `;
+            div.onclick = () => this.selectSlot(slotKey, slot);
+        }
+        
         return div;
     }
 
