@@ -27,9 +27,13 @@ function initializeSupabase() {
             return false;
         }
         
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Create client with correct v2 syntax
+        const { createClient } = window.supabase;
+        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         console.log('✅ Supabase initialized successfully');
-        console.log('Supabase client methods:', Object.getOwnPropertyNames(supabase));
+        console.log('Supabase client type:', typeof supabase);
+        console.log('Has from method:', typeof supabase.from);
         return true;
     } catch (error) {
         console.error('❌ Error initializing Supabase:', error);
