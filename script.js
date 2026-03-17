@@ -155,7 +155,11 @@ class TennisReservationSystem {
     }
 
     async loadSchedule(forceRefresh = false) {
+        console.log('🔄 Loading schedule, forceRefresh:', forceRefresh);
+        console.log('Current data:', this.data);
+        
         const schedule = await this.getScheduleForDate(this.selectedDate, forceRefresh);
+        console.log('Schedule received:', schedule);
         
         // Load main page slots
         this.loadMainPageSlots(schedule);
