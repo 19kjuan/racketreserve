@@ -98,13 +98,19 @@ class TennisReservationSystem {
         }
     }
 
-    async getScheduleForDate(date) {
+    async getScheduleForDate(date, forceRefresh = false) {
         try {
             const result = await this.db.getReservationsByDate(date);
             return result;
         } catch (error) {
             console.error('Error getting schedule:', error);
-            return this.generateDaySchedule(date);
+            // Only use fallback if not forcing refresh
+            if (!forceRefresh) {
+                return this.generateDaySchedule(date);
+            } else {
+                // If forcing refresh, return empty schedule to show all as available
+                return this.generateDaySchedule(date);
+            }
         }
     }
 
@@ -148,8 +154,8 @@ class TennisReservationSystem {
         return schedule;
     }
 
-    async loadSchedule() {
-        const schedule = await this.getScheduleForDate(this.selectedDate);
+    async loadSchedule(forceRefresh = false) {
+        const schedule = await this.getScheduleForDate(this.selectedDate, forceRefresh);
         
         // Load main page slots
         this.loadMainPageSlots(schedule);
@@ -360,8 +366,8 @@ class TennisReservationSystem {
                 document.getElementById('reservationForm').style.display = 'none';
                 this.selectedSlot = null;
                 
-                // Reload schedule
-                await this.loadSchedule();
+                // Reload schedule with force refresh
+                await this.loadSchedule(true);
             } else {
                 this.showNotification('Error al guardar reserva: ' + result.error, 'error');
             }
